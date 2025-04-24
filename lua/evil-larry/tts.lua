@@ -39,7 +39,10 @@ end
 M.tts = function(text)
     local response = M.get_tts_data(text)
 
-    local file_path = "/home/bgodley/git/evil-larry.nvim/tts.mp3"
+    local file_path = vim.fn.stdpath("data") .. "/evil-larry/tts.mp3"
+    
+    -- Ensure directory exists
+    vim.fn.mkdir(vim.fn.fnamemodify(file_path, ":h"), "p")
 
     local file = io.open(file_path, "w")
     if not file then
