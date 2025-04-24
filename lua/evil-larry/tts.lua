@@ -14,7 +14,7 @@ curl -X POST "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?o
 ]]
 
 M.get_tts_data = function(text)
-    local voice_id = "NOpBlnGInO9m6vDvFkFC"
+    local voice_id = "3SF4rB1fGBMXU9xRM7pz"
     local url = "https://api.elevenlabs.io/v1/text-to-speech/" .. voice_id .. "?output_format=mp3_44100_128"
     local api_key = os.getenv("ELEVENLABS_API_KEY")
     local headers = {
