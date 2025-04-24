@@ -21,18 +21,20 @@ function M.setup(opts)
     vim.api.nvim_create_autocmd("BufWritePost", {
         group = vim.api.nvim_create_augroup("EvilLarryOnSave", { clear = true }),
         callback = function(ev)
-            local prompt = require("evil-larry.prompt")
-            local prompt_text = prompt.get_prompt()
+            vim.schedule(function()
+                local prompt = require("evil-larry.prompt")
+                local prompt_text = prompt.get_prompt()
 
-            local completions = require("evil-larry.completion")
-            local response, err = completions.complete(prompt_text)
-            if err then
-                vim.notify(err, vim.log.levels.ERROR)
-                return
-            end
+                local completions = require("evil-larry.completion")
+                local response, err = completions.complete(prompt_text)
+                if err then
+                    vim.notify(err, vim.log.levels.ERROR)
+                    return
+                end
 
-            local tts = require("evil-larry.tts")
-            tts.tts(response)
+                local tts = require("evil-larry.tts")
+                tts.tts(response)
+            end)
         end,
     })
 end
