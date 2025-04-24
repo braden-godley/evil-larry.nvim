@@ -1,6 +1,5 @@
 local M = {}
-local credentials = require("ai.credentials")
-local http = require("ai.http")
+local http = require("evil-larry.http")
 
 -- Message type for chat history
 ---@class Message
@@ -13,21 +12,13 @@ local http = require("ai.http")
 local providers = {
     openai = {
         chat = function(messages, opts)
-            local creds, err = credentials.get_credential("openai")
-            if err then
-                return nil, err
-            end
-
             -- TODO: Implement OpenAI API call
             error("OpenAI implementation pending")
         end
     },
     gemini = {
         chat = function(messages, opts)
-            local creds, err = credentials.get_credential("gemini")
-            if err then
-                return nil, err
-            end
+            local api_key = os.getenv("GEMINI_API_KEY")
 
             -- Convert messages to Gemini format
             local system_instruction = {}
@@ -49,17 +40,14 @@ local providers = {
             local url = string.format(
                 "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s",
                 opts.model,
-                creds.api_key
+                api_key
             )
 
             local headers = {
                 ["Content-Type"] = "application/json"
             }
 
-            local body = vim.json.encode({
-                system_instruction = {
-                    parts = system_instruction,
-                },
+            local body = {
                 contents = contents,
                 generationConfig = {
                     temperature = opts.temperature,
@@ -67,10 +55,16 @@ local providers = {
                     topP = opts.top_p or 0.8,
                     topK = opts.top_k or 40
                 }
-            })
+            }
+
+            if #system_instruction > 0 then
+                body.system_instruction = {
+                    parts = system_instruction,
+                }
+            end
 
             -- Make request
-            local response, err = http.post(url, headers, body)
+            local response, err = http.post(url, headers, vim.json.encode(body))
             if err then
                 return nil, "Gemini API request failed: " .. err
             end
@@ -95,11 +89,6 @@ local providers = {
     },
     anthropic = {
         chat = function(messages, opts)
-            local creds, err = credentials.get_credential("anthropic")
-            if err then
-                return nil, err
-            end
-
             -- TODO: Implement Claude API call
             error("Claude implementation pending")
         end
@@ -108,20 +97,19 @@ local providers = {
 
 -- Configuration
 M.config = {
-    default_provider = "anthropic",
-    credentials_path = nil,  -- Will use default path if not set
+    default_provider = "gemini",
     providers = {
-        openai = {
-            model = "gpt-4-turbo-preview",
-            temperature = 0.7,
-            max_tokens = 2000,
-        },
         gemini = {
-            model = "gemini-pro",
+            model = "gemini-2.0-flash",
             temperature = 0.7,
             max_tokens = 2000,
             top_p = 0.8,
             top_k = 40,
+        },
+        openai = {
+            model = "gpt-4-turbo-preview",
+            temperature = 0.7,
+            max_tokens = 2000,
         },
         anthropic = {
             model = "claude-3-opus-20240229",
@@ -130,17 +118,6 @@ M.config = {
         }
     }
 }
-
--- Initialize the completion module
-function M.setup(opts)
-    M.config = vim.tbl_deep_extend("force", M.config, opts or {})
-    
-    -- Load credentials
-    local ok, err = credentials.load_credentials(M.config.credentials_path)
-    if not ok then
-        error("Failed to load AI credentials: " .. err)
-    end
-end
 
 -- Legacy completion function for backward compatibility
 function M.complete(prompt, opts)
