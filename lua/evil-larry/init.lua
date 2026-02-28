@@ -12,17 +12,23 @@ M.config = {}
 function M.setup(opts)
 	M.config = vim.tbl_deep_extend("force", default_config, opts or {})
 
-	vim.api.nvim_create_user_command("TTS", function(args)
+	vim.api.nvim_create_user_command("TTS", function(opts)
 		local tts = require("evil-larry.tts")
-		tts.tts(args.args)
+		tts.tts(opts.args)
 	end, { nargs = "*" })
 
-	vim.api.nvim_create_user_command("evil", function()
-		M.evil()
+	vim.api.nvim_create_user_command("Evil", function(opts)
+		local voice = opts.fargs[1] or "evil-larry"
+		M.evil(voice)
 	end, { nargs = "*" })
+
+	vim.api.nvim_create_user_command("Voices", function()
+		local tts = require("evil-larry.tts")
+		tts.get_voice_list()
+	end)
 end
 
-function M.evil()
+function M.evil(voice)
 	vim.schedule(function()
 		local prompt = require("evil-larry.prompt")
 		local prompt_text = prompt.get_prompt()
@@ -35,9 +41,8 @@ function M.evil()
 		end
 
 		local tts = require("evil-larry.tts")
-		tts.tts(response)
+		tts.tts(response, voice)
 	end)
 end
 
 return M
-

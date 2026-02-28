@@ -21,6 +21,12 @@ M.voices = {
 	["villain"] = "zYcjlYFOd3taleS0gkk3",
 }
 
+M.get_voice_list = function()
+	for voice, _ in pairs(M.voices) do
+		print(voice)
+	end
+end
+
 M.get_tts_data = function(text, voice)
 	local voice_id = M.voices[voice]
 	local url = "https://api.elevenlabs.io/v1/text-to-speech/" .. voice_id .. "?output_format=mp3_44100_128"
@@ -44,8 +50,8 @@ M.get_tts_data = function(text, voice)
 	return response
 end
 
-M.tts = function(text)
-	local response = M.get_tts_data(text, "old-man")
+M.tts = function(text, voice)
+	local response = M.get_tts_data(text, voice)
 
 	local id = os.time()
 	local file_path = vim.fn.stdpath("data") .. "/evil-larry/tts-" .. id .. ".mp3"
