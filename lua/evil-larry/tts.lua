@@ -45,7 +45,7 @@ M.get_tts_data = function(text, voice)
 end
 
 M.tts = function(text)
-	local response = M.get_tts_data(text, "evil-larry")
+	local response = M.get_tts_data(text, "old-man")
 
 	local id = os.time()
 	local file_path = vim.fn.stdpath("data") .. "/evil-larry/tts-" .. id .. ".mp3"

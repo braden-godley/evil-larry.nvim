@@ -140,8 +140,21 @@ function M.chat_complete(messages, opts)
 	-- Merge provider-specific config with opts
 	local provider_opts = vim.tbl_deep_extend("force", M.config.providers[provider], opts)
 
-	return providers[provider].chat(messages, provider_opts)
+	local message = providers[provider].chat(messages, provider_opts)
+
+	local id = os.time()
+	local file_path = vim.fn.stdpath("data") .. "/evil-larry/completion-" .. id .. ".txt"
+
+	local file = io.open(file_path, "w")
+	if not file then
+		vim.notify("Failed to create file", vim.log.levels.ERROR)
+	else
+		file:write(message)
+		file:close()
+	end
+
+	-- Ensure directory exists
+	vim.fn.mkdir(vim.fn.fnamemodify(file_path, ":h"), "p")
 end
 
 return M
-
