@@ -155,6 +155,8 @@ function M.chat_complete(messages, opts)
 
 	-- Ensure directory exists
 	vim.fn.mkdir(vim.fn.fnamemodify(file_path, ":h"), "p")
+
+	return message
 end
 
 return M
