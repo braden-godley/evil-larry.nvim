@@ -100,7 +100,7 @@ M.config = {
 	default_provider = "gemini",
 	providers = {
 		gemini = {
-			model = "gemini-2.5-flash",
+			model = "gemini-3-flash-preview",
 			temperature = 0.7,
 			max_tokens = 2000,
 			top_p = 0.8,
@@ -140,7 +140,10 @@ function M.chat_complete(messages, opts)
 	-- Merge provider-specific config with opts
 	local provider_opts = vim.tbl_deep_extend("force", M.config.providers[provider], opts)
 
-	local message = providers[provider].chat(messages, provider_opts)
+	local message, err = providers[provider].chat(messages, provider_opts)
+	if err then
+		error(err)
+	end
 
 	local id = os.time()
 	local file_path = vim.fn.stdpath("data") .. "/evil-larry/completion-" .. id .. ".txt"

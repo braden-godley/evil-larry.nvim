@@ -19,6 +19,10 @@ M.voices = {
 	["german"] = "nzeAacJi50IvxcyDnMXa",
 	["wizard"] = "oR4uRy4fHDUGGISL0Rev",
 	["villain"] = "zYcjlYFOd3taleS0gkk3",
+	["nazgul"] = "vflhOcwDlonnVFj3wJqz",
+	["alien"] = "TsHrPyMlNFuIYnbODF01",
+	["south"] = "904GxMGdESbkMtNiWylt",
+	["grandma"] = "0rEo3eAjssGDUCXHYENf",
 }
 
 M.get_voice_list = function()
